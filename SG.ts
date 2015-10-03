@@ -113,6 +113,7 @@ export class Matrix {
         var xd = degToRad(eu.x);
         var yd = degToRad(eu.y);
         var zd = degToRad(eu.z);
+        
         var n11 = 1;    var n12 = 0;               var n13 = 0;                var n14 = 0;
         var n21 = 0;    var n22 = Math.cos(xd);    var n23 = -Math.sin(xd);    var n24 = 0;
         var n31 = 0;    var n32 = Math.sin(xd);    var n33 = Math.cos(xd);     var n34 = 0;
@@ -125,8 +126,8 @@ export class Matrix {
         n41 = 0;                n42 = 0;    n43 = 0;                n44 = 1;
         var yMatrix = new Matrix( n11, n12, n13, n14, n21, n22, n23, n24, n31, n32, n33, n34, n41, n42, n43, n44 );
         
-        n11 = Math.cos(zd);     n12 = -Math.sin(yd);;   n13 = 0;    n14 = 0;
-        n21 = Math.sin(yd);     n22 = Math.cos(yd);     n23 = 0;    n24 = 0;
+        n11 = Math.cos(zd);     n12 = -Math.sin(zd);    n13 = 0;    n14 = 0;
+        n21 = Math.sin(zd);     n22 = Math.cos(zd);     n23 = 0;    n24 = 0;
         n31 = 0;                n32 = 0;                n33 = 1;    n34 = 0;
         n41 = 0;                n42 = 0;                n43 = 0;    n44 = 1;
         var zMatrix = new Matrix( n11, n12, n13, n14, n21, n22, n23, n24, n31, n32, n33, n34, n41, n42, n43, n44 );
@@ -157,20 +158,36 @@ export class Matrix {
     // compose transformations with multiplication.  Multiply this * b, 
     // returning the result in a new matrix
    	multiply (b: Matrix ): Matrix {
-        var a1 = this.elements[0]; var a2 = this.elements[4]; var a3 = this.elements[8]; var a4 = this.elements[12];
-        var a5 = this.elements[1]; var a6 = this.elements[5]; var a7 = this.elements[9]; var a8 = this.elements[13];
-        var a9 = this.elements[2]; var a10 = this.elements[6]; var a11 = this.elements[10]; var a12 = this.elements[14];
-        var a13 = this.elements[3]; var a14 = this.elements[7]; var a15 = this.elements[11]; var a16 = this.elements[15];
+        var a0 = this.elements[0]; var a4 = this.elements[4]; var a8 = this.elements[8]; var a12 = this.elements[12];
+        var a1 = this.elements[1]; var a5 = this.elements[5]; var a9 = this.elements[9]; var a13 = this.elements[13];
+        var a2 = this.elements[2]; var a6 = this.elements[6]; var a10 = this.elements[10]; var a14 = this.elements[14];
+        var a3 = this.elements[3]; var a7 = this.elements[7]; var a11 = this.elements[11]; var a15 = this.elements[15];
         
-        var b1 = b.elements[0]; var b2 = b.elements[4]; var b3 = b.elements[8]; var b4 = b.elements[12];
-        var b5 = b.elements[1]; var b6 = b.elements[5]; var b7 = b.elements[9]; var b8 = b.elements[13];
-        var b9 = b.elements[2]; var b10 = b.elements[6]; var b11 = b.elements[10]; var b12 = b.elements[14];
-        var b13 = b.elements[3]; var b14 = b.elements[7]; var b15 = b.elements[11]; var b16 = b.elements[15];
+        var b0 = b.elements[0]; var b4 = b.elements[4]; var b8 = b.elements[8]; var b12 = b.elements[12];
+        var b1 = b.elements[1]; var b5 = b.elements[5]; var b9 = b.elements[9]; var b13 = b.elements[13];
+        var b2 = b.elements[2]; var b6 = b.elements[6]; var b10 = b.elements[10]; var b14 = b.elements[14];
+        var b3 = b.elements[3]; var b7 = b.elements[7]; var b11 = b.elements[11]; var b15 = b.elements[15];
         
-        var n11 = a1*b1 + a2*b5 + a3*b9 + a4*b13; var n12 = a1*b2 + a2*b6 + a3*b10 + a4*b14; var n13 = a1*b3 + a2*b7 + a3*b11 + a4*b15; var n14 = a1*b4 + a2*b8 + a3*b12 + a4*b16;
-        var n21 = a5*b1 + a6*b5 + a7*b9 + a8*b13; var n22 = a5*b2 + a6*b6 + a7*b10 + a8*b14; var n23 = a5*b3 + a6*b7 + a7*b11 + a8*b15; var n24 = a5*b4 + a6*b8 + a7*b12 + a8*b16;
-        var n31 = a9*b1 + a10*b5 + a11*b9 + a12*b13; var n32 = a9*b2 + a10*b6 + a11*b10 + a12*b14; var n33 = a9*b3 + a10*b7 + a11*b11 + a12*b15; var n34 = a9*b4 + a10*b8 + a11*b12 + a12*b16;
-        var n41 = a13*b1 + a14*b5 + a15*b9 + a16*b13; var n42 = a13*b2 + a14*b6 + a15*b10 + a16*b14; var n43 = a13*b3 + a14*b7 + a15*b11 + a16*b15; var n44 = a13*b4 + a14*b8 + a15*b12 + a16*b16;
+        var n11 = a0*b0 + a4*b1 + a8*b2 + a12*b3;
+        var n12 = a0*b4 + a4*b5 + a8*b6 + a12*b7;
+        var n13 = a0*b8 + a4*b9 + a8*b10 + a12*b11;
+        var n14 = a0*b12 + a4*b13 + a8*b14 + a12*b15;
+        
+        var n21 = a1*b0 + a5*b1 + a9*b2 + a13*b3;
+        var n22 = a1*b4 + a5*b5 + a9*b6 + a13*b7;
+        var n23 = a1*b8 + a5*b9 + a9*b10 + a13*b11;
+        var n24 = a1*b12 + a5*b13 + a9*b14 + a13*b15;
+        
+        
+        var n31 = a2*b0 + a6*b1 + a10*b2 + a14*b3;
+        var n32 = a2*b4 + a6*b5 + a10*b6 + a14*b7;
+        var n33 = a2*b8 + a6*b9 + a10*b10 + a14*b11;
+        var n34 = a2*b12 + a6*b13 + a10*b14 + a14*b15;
+        
+        var n41 = a3*b0 + a7*b1 + a11*b2 + a15*b3;
+        var n42 = a3*b4 + a7*b5 + a11*b6 + a15*b7;
+        var n43 = a3*b8 + a7*b9 + a11*b10 + a15*b11;
+        var n44 = a3*b12 + a7*b13 + a11*b14 + a15*b15;
         return new Matrix( n11, n12, n13, n14, n21, n22, n23, n24, n31, n32, n33, n34, n41, n42, n43, n44 );
 	}
 
@@ -227,6 +244,7 @@ export class Thing {
 
     // compute transform from position * rotation * scale and inverseTransform from their inverses 
     computeTransforms() {
+        // Getting transform
         var pos = Matrix.makeTranslation(this.position);
         
         var sca = Matrix.makeScale(this.scale);
@@ -234,20 +252,23 @@ export class Thing {
         var posTimesRot = pos.multiply(this.rotation);
         this.transform = posTimesRot.multiply(sca);
         
+        // Getting inverses of rotation, scale, and position, in that order
         var invrot = Matrix.transpose(this.rotation);
 
-        var invscavec = new Vector(1/this.scale.x, 1/this.position.y, 1/this.position.z);
+        var invscavec = new Vector(1/this.scale.x, 1/this.scale.y, 1/this.scale.z);
         var invsca = Matrix.makeScale(invscavec);
         
         var invposvec = Vector.times(-1, this.position);
         var invpos = Matrix.makeTranslation(invposvec);
         
-        var posTimesRotInv = invsca.multiply(invrot);
-        this.inverseTransform = posTimesRotInv.multiply(invpos);
+        // Getting inverse transform
+        var scaTimesRot = invsca.multiply(invrot);
+        this.inverseTransform = scaTimesRot.multiply(invpos);
         
+        // Getting worldTransform using parent
         this.worldTransform = Matrix.identity();
         if (this.parent != undefined) {
-            this.worldTransform = this.parent.worldTransform.multiply(this.transform);
+            this.worldTransform = Matrix.copy(this.parent.worldTransform.multiply(this.transform));
         }
     }    
 
@@ -398,13 +419,12 @@ export class Scene {
         var ca = this.ambient;
         for (var i = 0; i < this.lights.length; i++) {
             var light = this.lights[i];
-            ca.r += light.color.r*Math.max(0, Vector.dot(normal, pos));
-            ca.b += light.color.b*Math.max(0, Vector.dot(normal, pos));
-            ca.g += light.color.g*Math.max(0, Vector.dot(normal, pos));  
+            var cl = light.color;
+            var p = Vector.minus(light.worldTransform.getPosition(), pos);
+            var l = Vector.norm(p);
+            var a = Color.scale(Math.max(0, Vector.dot(normal, l)), cl);
+            res = Color.plus(res, Color.times(cr, Color.plus(ca, a))); 
         }
-        res.r = cr.r * ca.r;
-        res.g = cr.g * ca.g;
-        res.b = cr.b * ca.b;
         return res;
     }
 
@@ -463,21 +483,19 @@ export class Scene {
     render() {
         this.lights = new Array();
         this.camera = undefined;
-         
+        
+        // Calculating transforms, setting up lights & camera
         var renderPass1 = (obj: Thing) => {
-            obj.computeTransforms;
-            /*if (this.camera != undefined) {
-                this.camera.worldInverseTransform = Matrix.identity();
-            }*/
+            obj.computeTransforms();
             if (obj instanceof Light) {
                 this.lights.push(obj);
             }
-            var trav = obj;
             if (obj instanceof Camera) {
-                var matrix = Matrix.copy(obj.inverseTransform);
                 this.camera = obj;
+                var trav = obj.parent;
+                var matrix = Matrix.copy(obj.inverseTransform);
                 while (trav != undefined) {
-                    matrix = matrix.multiply(trav.inverseTransform);
+                    matrix = Matrix.copy(matrix.multiply(trav.inverseTransform));
                     trav = trav.parent;
                 }
                 this.camera.worldInverseTransform = Matrix.copy(matrix);
@@ -493,25 +511,28 @@ export class Scene {
         = this.domElement.style["-ms-perspective"] 
         = this.camera.getFocalLength(this.height).toString() + "px";
         
-        var renderPass2 = (obj: HTMLDivThing) => {
+        // Calculating entire transformation and color
+        var renderPass2 = (obj: Thing) => {
             obj.transform = Matrix.copy(this.camera.worldInverseTransform.multiply(obj.worldTransform));
-            var zvec = obj.worldTransform.getZVector();
-            var n;
-            if (Vector.mag(zvec) == 0) {
-                n = new Vector(0, 0, 1);
+            if (obj instanceof HTMLDivThing) {
+                var zvec = obj.worldTransform.getZVector();
+                var n;
+                if (Vector.mag(zvec) == 0) {
+                    n = new Vector(0, 0, 1);
+                }
+                else {
+                    n = Vector.norm(zvec);
+                }
+                var c = this.shade(obj, zvec, n);
+                obj.div.style.backgroundColor = "rgb(" + c.r*100 + "%," + c.g*100 + "%," + c.b*100 + "%)";
+                const transformStr = this.getObjectCSSMatrix(obj.transform);
+                obj.div.style.transform 
+                    = obj.div.style["-webkit-transform"]
+                    = obj.div.style["-moz-transform"]
+                    = obj.div.style["-o-transform"]
+                    = obj.div.style["-ms-transform"] = transformStr;
+                this.domElement.appendChild(obj.div);
             }
-            else {
-                n = Vector.norm(zvec);
-            }
-            var c = this.shade(obj, zvec, n);
-            obj.div.style.backgroundColor = "rgb(" + c.r*100 + "%," + c.g*100 + "%," + c.b*100 + "%)";
-            const transformStr = this.getObjectCSSMatrix(obj.worldTransform.multiply(this.camera.worldInverseTransform));
-            obj.div.style.transform 
-                = obj.div.style["-webkit-transform"]
-                = obj.div.style["-moz-transform"]
-                = obj.div.style["-o-transform"]
-                = obj.div.style["-ms-transform"] = transformStr;
-            this.domElement.appendChild(obj.div);
         };
         this.world.traverse(renderPass2);
     }
