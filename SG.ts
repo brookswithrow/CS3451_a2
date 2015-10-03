@@ -82,10 +82,20 @@ export class Matrix {
 
     // transpose the matrix, returning a new matrix with the result
     static transpose(m: Matrix): Matrix {
+        var n11 = m.elements[0]; var n12 = m.elements[1]; var n13 = m.elements[2]; var n14 = m.elements[3];
+        var n21 = m.elements[4]; var n22 = m.elements[5]; var n23 = m.elements[6]; var n24 = m.elements[7];
+        var n31 = m.elements[8]; var n32 = m.elements[9]; var n33 = m.elements[10]; var n34 = m.elements[11];
+        var n41 = m.elements[12]; var n42 = m.elements[12]; var n43 = m.elements[14]; var n44 = m.elements[15];
+        return new Matrix( n11, n12, n13, n14, n21, n22, n23, n24, n31, n32, n33, n34, n41, n42, n43, n44 );
     }     
 
     // copy the matrix to a new matrix
 	static copy (m: Matrix): Matrix {
+        var n11 = m.elements[0]; var n12 = m.elements[4]; var n13 = m.elements[8]; var n14 = m.elements[12];
+        var n21 = m.elements[1]; var n22 = m.elements[5]; var n23 = m.elements[9]; var n24 = m.elements[13];
+        var n31 = m.elements[2]; var n32 = m.elements[6]; var n33 = m.elements[10]; var n34 = m.elements[14];
+        var n41 = m.elements[3]; var n42 = m.elements[7]; var n43 = m.elements[11]; var n44 = m.elements[15];
+        return new Matrix( n11, n12, n13, n14, n21, n22, n23, n24, n31, n32, n33, n34, n41, n42, n43, n44 );
 	}
 
     // return a new matrix containing the identify matrix
@@ -99,34 +109,85 @@ export class Matrix {
     // create a new rotation matrix from the input vector. 
     // eu.x, eu.y, eu.z contain the rotations in degrees around the three axes. 
     // Apply the rotations in the order x, y, z.
-    static makeRotationFromEuler (eu: Vector): Matrix {        
+    static makeRotationFromEuler (eu: Vector): Matrix {
+        var xd = degToRad(eu.x);
+        var yd = degToRad(eu.y);
+        var zd = degToRad(eu.z);
+        var n11 = 1;    var n12 = 0;               var n13 = 0;                var n14 = 0;
+        var n21 = 0;    var n22 = Math.cos(xd);    var n23 = -Math.sin(xd);    var n24 = 0;
+        var n31 = 0;    var n32 = Math.sin(xd);    var n33 = Math.cos(xd);     var n34 = 0;
+        var n41 = 0;    var n42 = 0;               var n43 = 0;                var n44 = 1;
+        var xMatrix = new Matrix( n11, n12, n13, n14, n21, n22, n23, n24, n31, n32, n33, n34, n41, n42, n43, n44 );
+        
+        n11 = Math.cos(yd);     n12 = 0;    n13 = Math.sin(yd);     n14 = 0;
+        n21 = 0;                n22 = 1;    n23 = 0;                n24 = 0;
+        n31 = -Math.sin(yd);    n32 = 0;    n33 = Math.cos(yd);     n34 = 0;
+        n41 = 0;                n42 = 0;    n43 = 0;                n44 = 1;
+        var yMatrix = new Matrix( n11, n12, n13, n14, n21, n22, n23, n24, n31, n32, n33, n34, n41, n42, n43, n44 );
+        
+        n11 = Math.cos(zd);     n12 = -Math.sin(yd);;   n13 = 0;    n14 = 0;
+        n21 = Math.sin(yd);     n22 = Math.cos(yd);     n23 = 0;    n24 = 0;
+        n31 = 0;                n32 = 0;                n33 = 1;    n34 = 0;
+        n41 = 0;                n42 = 0;                n43 = 0;    n44 = 1;
+        var zMatrix = new Matrix( n11, n12, n13, n14, n21, n22, n23, n24, n31, n32, n33, n34, n41, n42, n43, n44 );
+        
+        return (xMatrix.multiply(yMatrix)).multiply(zMatrix);
 	}
 
     // create a new translation matrix from the input vector
     // t.x, t.y, t.z contain the translation values in each direction
 	static makeTranslation(t: Vector): Matrix {
+        var n11 = 1; var n12 = 0; var n13 = 0; var n14 = t.x;
+        var n21 = 0; var n22 = 1; var n23 = 0; var n24 = t.y;
+        var n31 = 0; var n32 = 0; var n33 = 1; var n34 = t.z;
+        var n41 = 0; var n42 = 0; var n43 = 0; var n44 = 1;
+        return new Matrix( n11, n12, n13, n14, n21, n22, n23, n24, n31, n32, n33, n34, n41, n42, n43, n44 );
 	}
 
     // create a new scale matrix from the input vector
     // s.x, s.y, s.z contain the scale values in each direction
 	static makeScale(s: Vector): Matrix {
+        var n11 = s.x; var n12 = 0; var n13 = 0; var n14 = 0;
+        var n21 = 0; var n22 = s.y; var n23 = 0; var n24 = 0;
+        var n31 = 0; var n32 = 0; var n33 = s.z; var n34 = 0;
+        var n41 = 0; var n42 = 0; var n43 = 0; var n44 = 1;
+        return new Matrix( n11, n12, n13, n14, n21, n22, n23, n24, n31, n32, n33, n34, n41, n42, n43, n44 );
     }
         
     // compose transformations with multiplication.  Multiply this * b, 
     // returning the result in a new matrix
    	multiply (b: Matrix ): Matrix {
+        var a1 = this.elements[0]; var a2 = this.elements[4]; var a3 = this.elements[8]; var a4 = this.elements[12];
+        var a5 = this.elements[1]; var a6 = this.elements[5]; var a7 = this.elements[9]; var a8 = this.elements[13];
+        var a9 = this.elements[2]; var a10 = this.elements[6]; var a11 = this.elements[10]; var a12 = this.elements[14];
+        var a13 = this.elements[3]; var a14 = this.elements[7]; var a15 = this.elements[11]; var a16 = this.elements[15];
+        
+        var b1 = b.elements[0]; var b2 = b.elements[4]; var b3 = b.elements[8]; var b4 = b.elements[12];
+        var b5 = b.elements[1]; var b6 = b.elements[5]; var b7 = b.elements[9]; var b8 = b.elements[13];
+        var b9 = b.elements[2]; var b10 = b.elements[6]; var b11 = b.elements[10]; var b12 = b.elements[14];
+        var b13 = b.elements[3]; var b14 = b.elements[7]; var b15 = b.elements[11]; var b16 = b.elements[15];
+        
+        var n11 = a1*b1 + a2*b5 + a3*b9 + a4*b13; var n12 = a1*b2 + a2*b6 + a3*b10 + a4*b14; var n13 = a1*b3 + a2*b7 + a3*b11 + a4*b15; var n14 = a1*b4 + a2*b8 + a3*b12 + a4*b16;
+        var n21 = a5*b1 + a6*b5 + a7*b9 + a8*b13; var n22 = a5*b2 + a6*b6 + a7*b10 + a8*b14; var n23 = a5*b3 + a6*b7 + a7*b11 + a8*b15; var n24 = a5*b4 + a6*b8 + a7*b12 + a8*b16;
+        var n31 = a9*b1 + a10*b5 + a11*b9 + a12*b13; var n32 = a9*b2 + a10*b6 + a11*b10 + a12*b14; var n33 = a9*b3 + a10*b7 + a11*b11 + a12*b15; var n34 = a9*b4 + a10*b8 + a11*b12 + a12*b16;
+        var n41 = a13*b1 + a14*b5 + a15*b9 + a16*b13; var n42 = a13*b2 + a14*b6 + a15*b10 + a16*b14; var n43 = a13*b3 + a14*b7 + a15*b11 + a16*b15; var n44 = a13*b4 + a14*b8 + a15*b12 + a16*b16;
+        return new Matrix( n11, n12, n13, n14, n21, n22, n23, n24, n31, n32, n33, n34, n41, n42, n43, n44 );
 	}
 
     // get the translation/positional componenet out of the matrix
     getPosition(): Vector {
+        return new Vector(this.elements[12], this.elements[13], this.elements[14]);
     }
     
     // get the x, y and z vectors out of the rotation part of the matrix
     getXVector(): Vector {
+        return new Vector(this.elements[0], this.elements[1], this.elements[2]);
     }
     getYVector(): Vector {
+        return new Vector(this.elements[4], this.elements[5], this.elements[6]);
     }
     getZVector(): Vector {
+        return new Vector(this.elements[8], this.elements[9], this.elements[10]);
     }
 }
 
@@ -166,19 +227,50 @@ export class Thing {
 
     // compute transform from position * rotation * scale and inverseTransform from their inverses 
     computeTransforms() {
+        var pos = Matrix.makeTranslation(this.position);
+        
+        var sca = Matrix.makeScale(this.scale);
+        
+        var posTimesRot = pos.multiply(this.rotation);
+        this.transform = posTimesRot.multiply(sca);
+        
+        var invrot = Matrix.transpose(this.rotation);
+
+        var invscavec = new Vector(1/this.scale.x, 1/this.position.y, 1/this.position.z);
+        var invsca = Matrix.makeScale(invscavec);
+        
+        var invposvec = Vector.times(-1, this.position);
+        var invpos = Matrix.makeTranslation(invposvec);
+        
+        var posTimesRotInv = invsca.multiply(invrot);
+        this.inverseTransform = posTimesRotInv.multiply(invpos);
+        
+        this.worldTransform = Matrix.identity();
+        if (this.parent != undefined) {
+            this.worldTransform = this.parent.worldTransform.multiply(this.transform);
+        }
     }    
 
     // add a child to this Thing.  Be sure to take care of setting the Thing's parent to this
     add(c: Thing) {
+        this.children.push(c);
+        c.parent = this;
     }
 
     // remove a Thing    
-    remove(c: Thing) {        
+    remove(c: Thing) {
+        var index = this.children.indexOf(c);
+        this.children[index].parent = null;
+        this.children[index] = null;        
     }
 
     // traverse the graph, executing the provided callback on this node and it's children
     // execute the callback before traversing the children
 	traverse ( callback: (obj: Thing ) => void ) {
+        callback(this);
+        this.children.forEach(child => {
+            child.traverse(callback);
+        });
 	}    
 }
 
@@ -234,6 +326,8 @@ export class Camera extends Thing {
     // get the focal length (distance from the viewplane) for a window of a specified
     // height and the camera's fovy    
     getFocalLength (height: number): number {
+        var theta = degToRad(this.fovy);
+        return height/(2*Math.tan(theta/2));
     }
 }
  
@@ -299,6 +393,19 @@ export class Scene {
     // diffuse Lambertian color, as described in chapter 10.1.
     // This function should account for all lights and an ambient light
     private shade(thing: Drawable, pos: Vector, normal: Vector): Color {
+        var res = new Color(0, 0, 0);
+        var cr = thing.surface.diffuse;
+        var ca = this.ambient;
+        for (var i = 0; i < this.lights.length; i++) {
+            var light = this.lights[i];
+            ca.r += light.color.r*Math.max(0, Vector.dot(normal, pos));
+            ca.b += light.color.b*Math.max(0, Vector.dot(normal, pos));
+            ca.g += light.color.g*Math.max(0, Vector.dot(normal, pos));  
+        }
+        res.r = cr.r * ca.r;
+        res.g = cr.g * ca.g;
+        res.b = cr.b * ca.b;
+        return res;
     }
 
     // convenience function provided so you don't have to fight with this.  
@@ -353,7 +460,59 @@ export class Scene {
     //
     // hint: you will need to traverse the graph more than once to do this.
     //
-    render() {  
-
+    render() {
+        this.lights = new Array();
+        this.camera = undefined;
+         
+        var renderPass1 = (obj: Thing) => {
+            obj.computeTransforms;
+            /*if (this.camera != undefined) {
+                this.camera.worldInverseTransform = Matrix.identity();
+            }*/
+            if (obj instanceof Light) {
+                this.lights.push(obj);
+            }
+            var trav = obj;
+            if (obj instanceof Camera) {
+                var matrix = Matrix.copy(obj.inverseTransform);
+                this.camera = obj;
+                while (trav != undefined) {
+                    matrix = matrix.multiply(trav.inverseTransform);
+                    trav = trav.parent;
+                }
+                this.camera.worldInverseTransform = Matrix.copy(matrix);
+            }
+        };
+        
+        this.world.traverse(renderPass1);
+        
+        this.domElement.style.perspective 
+        = this.domElement.style["-webkit-perspective"]
+        = this.domElement.style["-moz-perspective"]
+        = this.domElement.style["-o-perpective"]
+        = this.domElement.style["-ms-perspective"] 
+        = this.camera.getFocalLength(this.height).toString() + "px";
+        
+        var renderPass2 = (obj: HTMLDivThing) => {
+            obj.transform = Matrix.copy(this.camera.worldInverseTransform.multiply(obj.worldTransform));
+            var zvec = obj.worldTransform.getZVector();
+            var n;
+            if (Vector.mag(zvec) == 0) {
+                n = new Vector(0, 0, 1);
+            }
+            else {
+                n = Vector.norm(zvec);
+            }
+            var c = this.shade(obj, zvec, n);
+            obj.div.style.backgroundColor = "rgb(" + c.r*100 + "%," + c.g*100 + "%," + c.b*100 + "%)";
+            const transformStr = this.getObjectCSSMatrix(obj.worldTransform.multiply(this.camera.worldInverseTransform));
+            obj.div.style.transform 
+                = obj.div.style["-webkit-transform"]
+                = obj.div.style["-moz-transform"]
+                = obj.div.style["-o-transform"]
+                = obj.div.style["-ms-transform"] = transformStr;
+            this.domElement.appendChild(obj.div);
+        };
+        this.world.traverse(renderPass2);
     }
 }
